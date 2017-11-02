@@ -16,7 +16,7 @@ Make sure pip here is for Python 3.
 The module is executed by running:
 
 ```
-python dashboardBackend.py
+python live.py
 ```
 
 # License

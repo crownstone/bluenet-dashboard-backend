@@ -1,19 +1,20 @@
 import signal
 
-from webSocketServer import WebSocketServer
-from crownstoneBridge import CrownstoneBridge
-from logger import Logger
 
-
+from lib.logger import Logger
+from lib.simulator import Simulator
+from lib.uartParser import UartParser
+from lib.webSocketServer import WebSocketServer
 
 # lets start all modules one by one.
+
 logger = Logger()
-uart = CrownstoneBridge()
+parser = UartParser()
 server = WebSocketServer()
+simulator = Simulator()
 
 # make sure everything is killed and cleaned up on abort.
 def stopAll(signal, frame):
-    uart.stop()
     server.stop()
     logger.stop()
 
@@ -23,5 +24,5 @@ signal.signal(signal.SIGINT, stopAll)
 
 # start processes
 logger.enable()
-uart.start()
+simulator.start()
 server.start()

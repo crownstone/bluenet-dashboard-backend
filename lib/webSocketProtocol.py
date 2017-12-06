@@ -28,6 +28,7 @@ class BluenetDashboardProtocol(WebSocketServerProtocol):
             print("Binary message received: {} bytes".format(len(payload)))
         else:
             print("Text message received: {}".format(payload.decode('utf8')))
+            eventBus.emit(Topics.wsReceivedMessage, payload.decode('utf8'))
 
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed: {}".format(reason))

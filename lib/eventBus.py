@@ -8,6 +8,7 @@ class Topics(Enum):
     simulatedUartReadLine = 'simulatedUartReadLine'
     uartWriteCommand = 'uartWriteCommand'
     wsWriteMessage = 'wsWriteMessage'
+    wsReceivedMessage = 'wsReceivedMessage'
     websocketConnectionInitialized = 'websocketConnectionInitialized'
 
 

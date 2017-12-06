@@ -5,6 +5,16 @@ from lib.eventBus import eventBus
 
 import re
 
+USE_DATA = "__DATA__"
+match = {
+    "Set name to ":           {"type": "getName",             "value": USE_DATA},
+    "BLE Address: ":          {"type": "getMacAddress",       "value": USE_DATA},
+    "Start advertising":      {"type": "setAdvertisements",   "value": True},
+    "Advertising stopped":    {"type": "setAdvertisements",   "value": False},
+    "Configure setup mode":   {"type": "setMode",             "value": 'SETUP'},
+    "Configure normal mode":  {"type": "setMode",             "value": 'NORMAL'},
+}
+
 class UartParser:
 
     def __init__(self):
@@ -36,19 +46,43 @@ class UartParser:
 
     def decompose(self,data):
         """ this method will seperate the type from the payload """
+        data = data.rstrip()
         print(data)
         # do some parsing to fill the type and payload with the appropriate content
-        messageType = b'typeByte(s)'
-        payload = b'dataBytes'
+        messageType = None
+        payload = None
 
         # strip color codes
         ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
         data = ansi_escape.sub('', data)
 
+        readStart = 41
+
+        for key in match:
+            length = len(key)
+            if data[readStart:readStart+length] == key:
+                messageType = match[key]["type"]
+                if match[key]["value"] == USE_DATA:
+                    payload = data[readStart+length:len(data)]
+                else:
+                    payload = match[key]["value"]
+
         #print(data[41:-1])
-        if data[41:54] == "BLE Address: ":
-            messageType = "getMacAddress"
-            payload = data[54:71]
+        # if data[41:53] == "Set name to ":
+        #     messageType = "getName"
+        #     payload = data[54:-1]
+        # elif data[41:54] == "BLE Address: ":
+        #     messageType = "getMacAddress"
+        #     payload = data[54:71]
+        # elif data[41:58] == "Start advertising":
+        #     messageType = "setAdvertisements"
+        #     payload = True
+        # elif data[41:57] == "Stop advertising":
+        #     messageType = "setAdvertisements"
+        #     payload = False
+
+
+
         #print(payload)
 
 
@@ -62,12 +96,10 @@ class UartParser:
         data = None
         #print(messageType, payload, timestamp)
 
-        if messageType == 'getMacAddress':
-            translatedType = 'getMacAddress'
-            data = {"value": payload} # fill dictionary
-        elif messageType =='dataByte2':
-            translatedType = 'powerData'
-            data = {} # fill dictionary
+        translatedType = messageType
+        data = {"value": payload}  # fill dictionary
+
+
         # ... and so on
 
         wsMessage = self.constructMessage(translatedType, data, timestamp)

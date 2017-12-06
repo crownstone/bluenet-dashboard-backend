@@ -2,6 +2,7 @@ import signal
 import time
 
 from lib.logger import Logger
+from lib.uartComposer import UartComposer
 from lib.uartParser import UartParser
 from lib.webSocketServer import WebSocketServer
 from lib.crownstoneBridge import CrownstoneBridge
@@ -9,13 +10,14 @@ from lib.crownstoneBridge import CrownstoneBridge
 # lets start all modules one by one.
 
 logger = Logger()
-parser = UartParser()
-uart = CrownstoneBridge()
+uartParser = UartParser()
+uartListener = CrownstoneBridge()
+uartComposer = UartComposer()
 server = WebSocketServer()
 
 # make sure everything is killed and cleaned up on abort.
 def stopAll(signal, frame):
-    uart.stop()
+    uartListener.stop()
     server.stop()
     logger.stop()
 
@@ -24,12 +26,5 @@ signal.signal(signal.SIGINT, stopAll)
 
 # start processes
 logger.enable()
-uart.start()
-
-
-#time.sleep(1)
-#print("SENDING")
-#from lib.eventBus import eventBus, Topics
-#eventBus.emit(Topics.uartWriteCommand, b"a")
-
+uartListener.start()
 server.start() # <---- this is blocking

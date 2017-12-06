@@ -3,6 +3,7 @@ import time
 from lib.eventBus import Topics
 from lib.eventBus import eventBus
 
+import re
 
 class UartParser:
 
@@ -28,17 +29,30 @@ class UartParser:
     def decomposeSimulated(self,dataStr):
         timestampLength = 13
         timestamp = int(dataStr[:timestampLength])
-        # do some parsing to fill the type and payload with the appropraite content
+        # do some parsing to fill the type and payload with the appropriate content
         messageType, payload = self.decompose(bytes(dataStr[timestampLength:]))
 
         return messageType, payload, timestamp
 
     def decompose(self,data):
         """ this method will seperate the type from the payload """
-
-        # do some parsing to fill the type and payload with the appropraite content
+        print(data)
+        # do some parsing to fill the type and payload with the appropriate content
         messageType = b'typeByte(s)'
         payload = b'dataBytes'
+
+        # strip color codes
+        ansi_escape = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
+        data = ansi_escape.sub('', data)
+
+        #print(data[41:-1])
+        if data[41:54] == "BLE Address: ":
+            messageType = "getMacAddress"
+            payload = data[54:71]
+        #print(payload)
+
+
+
 
         return messageType, payload
 
@@ -46,10 +60,11 @@ class UartParser:
     def translateMessage(self, messageType, payload, timestamp):
         translatedType = None
         data = None
+        #print(messageType, payload, timestamp)
 
-        if messageType == 'dataByte1':
-            translatedType = 'advertisement'
-            data = {} # fill dictionary
+        if messageType == 'getMacAddress':
+            translatedType = 'getMacAddress'
+            data = {"value": payload} # fill dictionary
         elif messageType =='dataByte2':
             translatedType = 'powerData'
             data = {} # fill dictionary
@@ -60,9 +75,48 @@ class UartParser:
         eventBus.emit(Topics.wsWriteMessage, wsMessage)
 
 
-    def constuctMessage(self, translatedType, data, timestamp):
+    def constructMessage(self, translatedType, data, timestamp):
         return {
             'timestamp': timestamp,
             'type': translatedType,
             'data': data,
         }
+
+"""
+case 'getName':
+    store.dispatch({type:'STATE_UPDATE', data: {name: 'test' }}); // TODO: match messageObj.data to the value which is set to true.
+break;
+case 'getMacAddress':
+    store.dispatch({type:'STATE_UPDATE', data: {macAddress: '12:32:43:ff' }}); // TODO: match messageObj.data to the value which is set to true.
+break;
+case 'setRelay':
+    store.dispatch({type:'STATE_UPDATE', data: {relayEnabled: true }}); // TODO: match messageObj.data to the value which is set to true.
+break;
+case 'setAdvertisements':
+    store.dispatch({type:'STATE_UPDATE', data: {advertisementsEnabled: true }}); // TODO: match messageObj.data to the value which is set to true.
+break;
+case 'setMesh':
+    store.dispatch({type:'STATE_UPDATE', data: {meshEnabled: true }}); // TODO: match messageObj.data to the value which is set to true.
+break;
+case 'setIGBT':
+    store.dispatch({type:'STATE_UPDATE', data: {igbtState: true }}); // TODO: match messageObj.data to the value which is set to true.
+break;
+case 'setVoltageRange':
+    store.dispatch({type:'STATE_UPDATE', data: {voltageRange: true }}); // TODO: match messageObj.data to the value which is set to true.
+break;
+case 'setCurrentRange':
+    store.dispatch({type:'STATE_UPDATE', data: {currentRange: true }}); // TODO: match messageObj.data to the value which is set to true.
+break;
+case 'setVoltageDifferential':
+    store.dispatch({type:'STATE_UPDATE', data: {differentialVoltage: true }}); // TODO: match messageObj.data to the value which is set to true.
+break;
+case 'setCurrentDifferential':
+    store.dispatch({type:'STATE_UPDATE', data: {differentialCurrent: true }}); // TODO: match messageObj.data to the value which is set to true.
+break;
+case 'toggleMeasurementChannel':
+    store.dispatch({type:'STATE_UPDATE', data: {measureReference: true }}); // TODO: match messageObj.data to the value which is set to true.
+break;
+case 'currentData':
+case 'voltageData':
+case 'advertisementData':
+"""

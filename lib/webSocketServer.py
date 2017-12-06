@@ -8,7 +8,7 @@ from lib.webSocketProtocol import BluenetDashboardProtocol
 
 log.startLogging(sys.stdout)
 
-class WebSocketServer ():
+class WebSocketServer:
 
     def __init__(self):
         pass

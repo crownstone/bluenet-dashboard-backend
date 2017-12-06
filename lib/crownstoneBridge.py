@@ -24,7 +24,7 @@ class CrownstoneBridge (threading.Thread):
         eventBus.on(Topics.uartWriteCommand, self.writeToUart)
 
     def run(self):
-        print("RUNNING CrownstoneBridge THREAD")
+        print("RUNNING CrownstoneBridge THREAD", self.enabled)
         if self.enabled:
             self.startReading()
 
@@ -62,7 +62,9 @@ class CrownstoneBridge (threading.Thread):
         self.serialController.close()
 
     def writeToUart(self, data):
+        print("here")
         if self.enabled:
+            print("SENDING TO UART")
             self.serialController.write(data)
 
 

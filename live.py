@@ -1,5 +1,5 @@
 import signal
-
+import time
 
 from lib.logger import Logger
 from lib.uartParser import UartParser
@@ -25,4 +25,11 @@ signal.signal(signal.SIGINT, stopAll)
 # start processes
 logger.enable()
 uart.start()
-server.start()
+
+
+#time.sleep(1)
+#print("SENDING")
+#from lib.eventBus import eventBus, Topics
+#eventBus.emit(Topics.uartWriteCommand, b"a")
+
+server.start() # <---- this is blocking

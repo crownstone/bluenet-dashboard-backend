@@ -30,4 +30,14 @@ class WSParser:
             self.bluenetInstance._usbDev.setSendFilteredVoltageSamples(data["value"])
         elif data["command"] == "setFilteredCurrentLogging":
             self.bluenetInstance._usbDev.setSendFilteredCurrentSamples(data["value"])
+        elif data["command"] == "increaseCurrentRange":
+            self.bluenetInstance._usbDev.increaseCurrentRange()
+        elif data["command"] == "decreaseCurrentRange":
+            self.bluenetInstance._usbDev.decreaseCurrentRange()
+        elif data["command"] == "increaseVoltageRange":
+            self.bluenetInstance._usbDev.increaseVoltageRange()
+        elif data["command"] == "decreaseVoltageRange":
+            self.bluenetInstance._usbDev.decreaseVoltageRange()
+        elif data["command"] == "setVoltageChannelPin":
+            self.bluenetInstance._usbDev.setVoltageChannelPin(data["value"])
         

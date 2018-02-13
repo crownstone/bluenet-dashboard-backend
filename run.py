@@ -13,7 +13,7 @@ from parser.WSParser import WSParser
 bluenet = Bluenet()
 
 # Start up the USB bridge
-bluenet.initializeUsbBridge("/dev/tty.usbmodemFD131", catchSIGINT=False)
+bluenet.initializeUsbBridge("/dev/tty.usbmodemFD131", baudrate=230400, catchSIGINT=False)
 
 # start the websocket server
 server = WebSocketServer(9000)

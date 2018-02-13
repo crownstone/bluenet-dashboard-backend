@@ -38,6 +38,10 @@ class WSParser:
             self.bluenetInstance._usbDev.increaseVoltageRange()
         elif data["command"] == "decreaseVoltageRange":
             self.bluenetInstance._usbDev.decreaseVoltageRange()
-        elif data["command"] == "setVoltageChannelPin":
-            self.bluenetInstance._usbDev.setVoltageChannelPin(data["value"])
+        elif data["command"] == "toggleVoltageChannelPin":
+            self.bluenetInstance._usbDev.toggleVoltageChannelPin(data["value"])
+        elif data["command"] == "setDifferentialModeCurrent":
+            self.bluenetInstance._usbDev.setDifferentialModeCurrent(data["value"])
+        elif data["command"] == "setDifferentialModeVoltage":
+            self.bluenetInstance._usbDev.setDifferentialModeVoltage(data["value"])
         

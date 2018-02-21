@@ -6,7 +6,6 @@ from BluenetLib.lib.topics.DevTopics import DevTopics
 from BluenetWebSocket import WebSocketServer
 from BluenetWebSocket.lib.connector.BluenetConnector import BluenetConnector
 
-
 from parser.WSParser import WSParser
 
 # Create new bluenet instance

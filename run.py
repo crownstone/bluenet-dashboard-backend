@@ -1,6 +1,6 @@
 import signal
 
-from BluenetLib import Bluenet
+from BluenetLib import Bluenet, BluenetEventBus, Topics
 from BluenetLib.lib.topics.DevTopics import DevTopics
 
 from BluenetWebSocket import WebSocketServer
@@ -9,19 +9,19 @@ from BluenetWebSocket.lib.connector.BluenetConnector import BluenetConnector
 from parser.WSParser import WSParser
 
 # Create new bluenet instance
-bluenet = Bluenet()
+bluenet = Bluenet(catchSIGINT=False)
 
 # Start up the USB bridge
-bluenet.initializeUsbBridge("/dev/tty.usbmodemFD131", baudrate=230400, catchSIGINT=False)
+bluenet.initializeUSB("/dev/tty.usbmodemFA1331", baudrate=230400)
 
 # start the websocket server
 server = WebSocketServer(9000)
 
 # connect the websocket server to bluenet
-server.connectToBluenet(bluenet)
+server.connectToBluenet(bluenet, BluenetEventBus, Topics)
 
 connector = BluenetConnector()
-connector.connect(bluenet.getEventBus(), DevTopics)
+connector.connect(BluenetEventBus, DevTopics)
 
 # add our custom parser
 customParser = WSParser()
